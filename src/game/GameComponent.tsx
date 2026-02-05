@@ -2,7 +2,15 @@ import { useEffect, useRef } from 'react';
 import Phaser from 'phaser';
 import { MainScene } from './scenes/MainScene';
 
-const GameComponent = () => {
+interface GameComponentProps {
+  teamData: {
+    teamId: string;
+    playerName: string;
+    isLeader: boolean;
+  } | null;
+}
+
+const GameComponent = ({ teamData }: GameComponentProps) => {
   const gameRef = useRef<Phaser.Game | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -28,6 +36,10 @@ const GameComponent = () => {
           autoCenter: Phaser.Scale.CENTER_BOTH,
         },
       };
+
+      if (teamData) {
+        (config as any).teamData = teamData;
+      }
 
       gameRef.current = new Phaser.Game(config);
     }
@@ -63,6 +75,22 @@ const GameComponent = () => {
           </div>
         </div>
       </div>
+
+      {/* Player Info */}
+      {teamData && (
+        <div className="absolute top-4 left-4 z-10">
+          <div className="bg-card/90 backdrop-blur-sm rounded-lg p-4 border border-primary/30 shadow-lg">
+            <div className="space-y-1">
+              <p className="text-xs text-primary font-semibold">
+                {teamData.playerName}
+              </p>
+              {teamData.isLeader && (
+                <p className="text-[10px] text-neon-cyan">Team Leader</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Mini info */}
       <div className="absolute bottom-4 left-4 z-10">
